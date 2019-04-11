@@ -8,15 +8,18 @@
     - Private
     - Public
   tags: disable_firewall
+
 - name: Set service  startup mode to disable
   win_service:
     name: spooler
     start_mode: disable
     state: stopped
+
 - name: Create temp directory
   win_file:
     path: 'E:\installs\'
     state: directory
+
 - name: copy Azure VM Additions
   win_copy:
     src: files/AzureVMAdditions_20190408.zip
