@@ -1,3 +1,4 @@
+---
 galaxy_info:
   description: role for windows custom setting
   role_name: azure_custom
