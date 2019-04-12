@@ -2,11 +2,12 @@
 - name: Disable Domain firewall
   win_firewall:
     state: disabled
-    profiles: '{{ item }}'
+    profiles: "{{ item }}"
   with_items:
     - Domain
     - Private
     - Public
+  when: ansible_os_famaily == "Windows"
   tags: disable_firewall
 
 - name: Set service  startup mode to disable
