@@ -18,12 +18,12 @@
 
 - name: Create temp directory
   win_file:
-    path: 'E:\installs\'
+    path: "E:\installs\"
     state: directory
 
 - name: copy Azure VM Additions
   win_copy:
     src: files/AzureVMAdditions_20190408.zip
-    dest: 'E:\Installs'
-    force: 'yes'
-    remote_src: 'no'
+    dest: "E:\Installs"
+    force: "yes"
+    remote_src: "no"
