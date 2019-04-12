@@ -1,5 +1,0 @@
----
-  name: playbook to do custom settings
-  hosts: all
-  roles:
-    - '{ role: wardcomm.azure_custom }'
