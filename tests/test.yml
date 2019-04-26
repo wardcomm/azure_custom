@@ -1,5 +1,8 @@
 ---
-- hosts: localhost
-  remote_user: root
-  roles:
-    - {role: wardcomm.azure_custom}
+- hosts: all
+  tasks:
+
+  - name: ansible version print out if standard error
+    command: ansible --version
+    register: command_result
+    failed_when: "'FAILED' in command_result.stderr"
