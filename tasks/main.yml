@@ -1,2 +1,109 @@
 ---
-# vars file for azure_custom
+- name: Disable Domain firewall
+  win_firewall:
+    state: disabled
+    profiles: "{{ item }}"
+  with_items:
+    - Domain
+    - Private
+    - Public
+ # when: ansible_os_family == "windows"
+  tags: disable_firewall
+
+- name: Set service spooler startup mode to disabled
+  win_service:
+    name: spooler
+    start_mode: disabled
+    state: stopped
+
+- name: Create temp directory
+  win_file:
+    path: 'E:\installs\'
+    state: directory
+
+- name: copy Azure VM Additions
+  win_copy:
+    src: files/AzureVMAdditions_20190408.zip
+    dest: 'E:\installs\'
+    force: 'yes'
+    remote_src: 'no'
+
+- name: Install 7zip
+  win_chocolatey:
+    name: 7zip.install
+    state: latest
+
+- name: Install  windirstat
+  win_chocolatey:
+    name: windirstat
+    state: latest
+
+
+#  # Install PSCX to use for extracting a zip file
+# - name: Grab PSCX msi
+#   win_get_url:
+#     url: http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=pscx&DownloadId=923562&FileTime=130585918034470000&Build=20959
+#     dest: C:\Windows\Temp\pscx.msi
+
+# - name: Install PSCX
+#   win_psmodule:
+#     name: Pscx
+#     state: present
+
+- name: unzip archive with 7zip
+  win_command: 7z e  E:\installs\AzureVMAdditions_20190408.zip -oE:\installs\ -y
+
+- name: reg change for all drive to not have auto run on
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer
+    name: NoDriveTypeAutoRun
+    data: 16895
+    type: dword
+    state: present
+
+- name: reg change to disable action center pop up on login
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer
+    name: HideSCAHealth
+    data: 1
+    type: dword
+    state: present
+
+
+- name: Copy a psping.exe from install to windows sysetm32 foler on remote host
+  win_copy:
+    src: E:\installs\psping.exe
+    dest: C:\Windows\System32\psping.exe
+    remote_src: yes
+
+- name: Copy a psping64.exe from install to windows sysetm32 foler on remote host
+  win_copy:
+    src: E:\installs\psping64.exe
+    dest: C:\Windows\System32\psping64.exe
+    remote_src: yes
+
+# - name: Unzip Azure Additions
+#   win_unzip:
+#     src: E:\installs\AzureVMAdditions_20190408.zip
+#     dest: E:\installs\
+#     recurse: yes
+#     delete_archive: yes
+
+
+
+
+
+
+#Clean up
+- name: Remove a file, if present
+  win_file:
+    path: E:\installs\AzureVMAdditions_20190408.zip
+    state: absent
+
+# - name: Remove directory structure
+#   win_file:
+#     path: E:\installs
+#     state: absent
+
+# - name: reboot
+#   win_reboot:
